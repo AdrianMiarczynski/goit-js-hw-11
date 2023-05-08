@@ -53,7 +53,10 @@ const fechImages = () => {
 
     Notiflix.Notify.info(`Hooray! We found ${res.data.total} images.`);
 
-    new simpleLightbox('.gallery a');
+    new simpleLightbox('.gallery a', {
+      captionDelay: 250,
+      captionsData: 'alt',
+    });
 
     // if (imagesPerPage > res.data.totalHits) {
     //   Notiflix.Notify.warning(
@@ -67,7 +70,10 @@ const fechImages = () => {
 const loadMore = async () => {
   return await fechPhotos().then(res => {
     galerryEl.insertAdjacentHTML('beforeend', createObject(res));
-    new simpleLightbox('.gallery a');
+    new simpleLightbox('.gallery a', {
+      captionDelay: 250,
+      captionsData: 'alt',
+    });
 
     if (res.data.hits.length < 40) {
       btnElLoadMore.style.visibility = 'hidden';
