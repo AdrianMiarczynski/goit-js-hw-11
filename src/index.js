@@ -36,56 +36,55 @@ const fechPhotos = async () => {
   return objects;
 };
 
-const fechImages = () => {
-  fechPhotos().then(res => {
-    const hits = res.data.hits;
-    console.log(hits);
-    if (hits.length === 0) {
-      return Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
+const fechImages = async () => {
+  const data = await fechPhotos();
+  const hits = data.data.hits;
+  console.log(hits);
+  if (hits.length === 0) {
+    return Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
 
-    if (hits.length < 40) {
-      btnElLoadMore.style.visibility = 'hidden';
-    }
-    galerryEl.innerHTML = createObject(res);
+  if (hits.length < 40) {
+    btnElLoadMore.style.visibility = 'hidden';
+  }
+  galerryEl.innerHTML = createObject(data);
 
-    Notiflix.Notify.info(`Hooray! We found ${res.data.total} images.`);
+  Notiflix.Notify.info(`Hooray! We found ${data.data.total} images.`);
 
-    new simpleLightbox('.gallery a', {
-      captionDelay: 250,
-      captionsData: 'alt',
-    });
-
-    // if (imagesPerPage > res.data.totalHits) {
-    //   Notiflix.Notify.warning(
-    //     "We're sorry, but you've reached the end of search results."
-    //   );
-    //   btnElLoadMore.style.visibility = 'hidden';
-    // }
+  new simpleLightbox('.gallery a', {
+    captionDelay: 250,
+    captionsData: 'alt',
   });
+
+  // if (imagesPerPage > res.data.totalHits) {
+  //   Notiflix.Notify.warning(
+  //     "We're sorry, but you've reached the end of search results."
+  //   );
+  //   btnElLoadMore.style.visibility = 'hidden';
+  // }
 };
 
 const loadMore = async () => {
-  return await fechPhotos().then(res => {
-    galerryEl.insertAdjacentHTML('beforeend', createObject(res));
-    new simpleLightbox('.gallery a', {
-      captionDelay: 250,
-      captionsData: 'alt',
-    });
+  const data = await fechPhotos();
+  const hits = data.data.hits;
+  galerryEl.insertAdjacentHTML('beforeend', createObject(data));
+  new simpleLightbox('.gallery a', {
+    captionDelay: 250,
+    captionsData: 'alt',
+  });
 
-    if (res.data.hits.length < 40) {
-      btnElLoadMore.style.visibility = 'hidden';
-    }
-    const { height: cardHeight } = document
-      .querySelector('.gallery')
-      .firstElementChild.getBoundingClientRect();
+  if (hits.length < 40) {
+    btnElLoadMore.style.visibility = 'hidden';
+  }
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
 
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: 'smooth',
-    });
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
   });
 };
 
